@@ -8,8 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Xie Yuhui <i@xieyuhui.com>",
+  "license": "MIT",
   "dependencies": {
     "mkdirp": "^1.0.4",
     "ramda": "^0.27.1",
