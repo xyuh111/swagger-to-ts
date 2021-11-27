@@ -57,23 +57,23 @@ function __readFileSync(value) {
     }
     // 网址判断
     if (/^(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-\(\)]*[\w@?^=%&/~+#-\(\)])?$/.test(value)) {
-        return getJsonByApiDocs();
+        return getJsonByApiDocs(value);
     }
     // 获取本地json
-    return getJsonByTestDocs();
+    return getJsonByTestDocs(value);
 }
 // 使用测试 json 数据
-function getJsonByTestDocs() {
+function getJsonByTestDocs(value) {
     return new Promise((resolve, reject) => {
         // 测试 json 文件
-        let jsonObj = R.tryCatch(JSON.parse, null)(fs.readFileSync('./swagger-api-docs.json', 'utf8'));
+        let jsonObj = R.tryCatch(JSON.parse, null)(fs.readFileSync(value, 'utf8'));
         if (jsonObj) {
             resolve(jsonObj);
         }
     });
 }
 // 使用接口数据
-function getJsonByApiDocs() {
+function getJsonByApiDocs(swaggerUrl) {
     return new Promise((resolve, reject) => {
         // 'http://xxxx.xxx:80/web-api/v2/api-docs'.match(/^(https?:\/\/)?([\w-]+(\.[\w-]+)+):?((?<=:)\d{1,5})*(\/.*)/)
         //  ['http://xxxx.xxx:80/web-api/v2/api-docs', 'http://', 'xxxx.xxx', '.107', '80', '/web-api/v2/api-docs']
