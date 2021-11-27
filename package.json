@@ -1,16 +1,15 @@
 {
-  "name": "swagger-api-created",
+  "name": "swagger-codegen-axios-ts",
   "version": "1.0.0",
   "description": "",
-  "main": "create-api-map.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node ./create-api-map.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Xie Yuhui <i@xieyuhui.com>",
   "license": "MIT",
   "dependencies": {
+    "dayjs": "^1.10.7",
     "mkdirp": "^1.0.4",
     "ramda": "^0.27.1",
     "rimraf": "^3.0.2"
