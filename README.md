@@ -1,10 +1,12 @@
 1. 安装
-``` js
+
+```js
 $ npm install swagger-codegen-axios-ts
 ```
+
 2. 新建 index.js 拷贝以下代码粘贴
-``` js
-// swagger-codegen-axios-ts
+
+```js
 const path = require('path');
 const swaggerCodegenAxiosTs = require('swagger-codegen-axios-ts');
 /**
@@ -49,7 +51,7 @@ const annotationInfo = `/**
  * @description {description}
  * @author xieyuhui
  * @date {date}
-*/
+ */
 `;
 /**
  * server ts 文件需要引入的包
@@ -93,6 +95,7 @@ axios.interceptors.request.use(
     },
     (error: AxiosError) => Promise.reject(error)
 );
+
 /**
  * 响应拦截器，拦截登录过期或者没有权限
  */
@@ -114,6 +117,7 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
 /**
  * 统一发起请求的函数
  */
@@ -138,11 +142,10 @@ swaggerCodegenAxiosTs({
     // remoteUrl: 'http://47.xxx.6.107/web-api/v2/api-docs' // 优先判断 url
     jsonPath: path.join(__dirname, 'node_modules/swagger-codegen-axios-ts/swagger-api-docs.json') // remoteUrl 为空使用 jsonPath
 });
-
-
 ```
 
 3. 运行
+
 ```bash
 $ node index
 ```

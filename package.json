@@ -1,21 +1,20 @@
 {
-  "name": "swagger-codegen-axios-ts",
-  "version": "1.0.2",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-  },
-  "keywords": [],
-  "author": "Xie Yuhui <i@xieyuhui.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/xyuh111/swagger-to-ts"
-  },
-  "dependencies": {
-    "dayjs": "^1.10.7",
-    "mkdirp": "^1.0.4",
-    "ramda": "^0.27.1",
-    "rimraf": "^3.0.2"
-  }
+    "name": "swagger-codegen-axios-ts",
+    "version": "1.0.3",
+    "description": "",
+    "main": "index.js",
+    "scripts": {},
+    "keywords": [],
+    "author": "Xie Yuhui <i@xieyuhui.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xyuh111/swagger-to-ts"
+    },
+    "dependencies": {
+        "dayjs": "^1.10.7",
+        "mkdirp": "^1.0.4",
+        "ramda": "^0.27.1",
+        "rimraf": "^3.0.2"
+    }
 }

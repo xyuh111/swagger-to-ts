@@ -195,22 +195,24 @@ function __emitInterface(jsonData, __dataInfo) {
             }
         }, __dataInfo);
         jsonData.interfaces = __fnInterface;
-        await sleep(500)
+        await sleep(500);
         let reqInterfaceKey = await R.mapObjIndexed((v, k, o) => {
-            let __v = v.map(it =>  `${it.name}: ${it.interName}${it.type}`)
-            let p__v = v.map(it => {
-                if (!it.params) {
-                    return null
-                }
-                return `,\n        ${it.params}`
-            }).filter(Boolean)
+            let __v = v.map((it) => `${it.name}: ${it.interName}${it.type}`);
+            let p__v = v
+                .map((it) => {
+                    if (!it.params) {
+                        return null;
+                    }
+                    return `,\n        ${it.params}`;
+                })
+                .filter(Boolean);
             return {
-                params: p__v.join(""), // 实参
-                __params: __v.join(", "), // 形参
+                params: p__v.join(''), // 实参
+                __params: __v.join(', ') // 形参
             };
-        }, __fnInterface.reqInterfaceKey)
+        }, __fnInterface.reqInterfaceKey);
         // console.log(reqInterfaceKey)
-        __fnInterface.reqInterfaceKey = reqInterfaceKey
+        __fnInterface.reqInterfaceKey = reqInterfaceKey;
         // __mergeAndWrite("reqInterfaceKey", JSON.stringify(reqInterfaceKey))
         resolve();
     });
@@ -219,20 +221,21 @@ function __emitInterface(jsonData, __dataInfo) {
 // 生成请求方法 ts
 function __emitMethodsToTs(jsonData, __dataInfo) {
     R.mapObjIndexed((value, key, obj) => {
-        let newRequestImport = __requestImport
+        let newRequestImport = __requestImport;
         if (!jsonData.interfaces.resInterfaceKey[key + 'isBase']) {
-            newRequestImport = newRequestImport.replace(/IBase\s?,/g, '')
+            newRequestImport = newRequestImport.replace(/IBase\s?,/g, '');
         }
         if (!jsonData.interfaces.resInterfaceKey[key + 'isBasePage']) {
-            newRequestImport = newRequestImport.replace(/IBasePage\s?,?/g, '')
+            newRequestImport = newRequestImport.replace(/IBasePage\s?,?\s?/g, '');
         }
         if (!jsonData.interfaces.resInterfaceKey[key + 'isConverFormData']) {
-            newRequestImport = newRequestImport.replace(/,?\s*converFormData/g, '')
+            newRequestImport = newRequestImport.replace(/,?\s*converFormData/g, '');
         }
         /**
          * 作者信息
          * */
-        let annotationInfo = __annotationInfo.replace()
+        let annotationInfo = __annotationInfo
+            .replace()
             .replace('{Title}', value[0].fileName)
             .replace('{description}', value[0].mapName)
             .replace('{date}', dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'));
@@ -241,11 +244,11 @@ function __emitMethodsToTs(jsonData, __dataInfo) {
 
         let interfaceStr = jsonData.interfaces[key].req.join('');
         if (interfaceStr) {
-            jsonStr += `/*\n * 请求接口\n*/${interfaceStr}`;
+            jsonStr += `/*\n * 请求接口\n */${interfaceStr}`;
         }
         let interfaceStrRes = jsonData.interfaces[key].res.join('');
         if (interfaceStrRes) {
-            jsonStr += `/*\n * 响应接口\n*/${interfaceStrRes}`;
+            jsonStr += `/*\n * 响应接口\n */${interfaceStrRes}`;
         }
         value.forEach((it) => {
             // path 参数
@@ -259,8 +262,8 @@ function __emitMethodsToTs(jsonData, __dataInfo) {
             // 形参
             let __requestParamsData = '';
             if (jsonData.interfaces.reqInterfaceKey[it.methodName]) {
-                __requestParamsData = jsonData.interfaces.reqInterfaceKey[it.methodName].__params
-                requestParamsData = jsonData.interfaces.reqInterfaceKey[it.methodName].params
+                __requestParamsData = jsonData.interfaces.reqInterfaceKey[it.methodName].__params;
+                requestParamsData = jsonData.interfaces.reqInterfaceKey[it.methodName].params;
             }
             // 请求参数中有文件有上传文件
             if (it.formData.length) {
@@ -272,7 +275,7 @@ function __emitMethodsToTs(jsonData, __dataInfo) {
             jsonStr += `
 /**  
  * @description ${it.summary}${it.description ? ` -- ${it.description}` : ''}
-*/
+ */
 export function ${it.methodName}(${__requestParamsData}): Promise<${resInterType ? 'IBasePage' : 'IBase'}<${resInterName}${resInterType}>> {
     return request({
         method: '${it.method.toUpperCase()}',
@@ -306,69 +309,69 @@ function __requestParams(it, key, definitions, __fnInterface, interfaceName = ''
     if (!newInterfaceName) {
         newInterfaceName = `I${R.replace(/^\w{1}/, R.toUpper)(it.methodName)}`;
     }
-    
+
     // interfaceName = undefined 说明取值 body、params、paths
-    if (!interfaceName) { // 请求体，第一层判断
-        //区分 query（axios >> params）、formdata（axios >> data）、body（axios >> data） 
+    if (!interfaceName) {
+        // 请求体，第一层判断
+        //区分 query（axios >> params）、formdata（axios >> data）、body（axios >> data）
         /**
          * 有 formData 肯定没有 body，
          */
 
         if (!R.isNil(it.formData) && !R.isEmpty(it.formData)) {
-            let __newInterfaceName = newInterfaceName + "FormData"
+            let __newInterfaceName = newInterfaceName + 'FormData';
             let requestFormData = R.indexBy(R.prop('name'), it.formData);
             if (requestFormData && !R.isEmpty(requestFormData)) {
-                __fnInterface.resInterfaceKey[key + 'isConverFormData'] = true
+                __fnInterface.resInterfaceKey[key + 'isConverFormData'] = true;
                 if (!__fnInterface.reqInterfaceKey[it.methodName]) {
-                    __fnInterface.reqInterfaceKey[it.methodName] = []
+                    __fnInterface.reqInterfaceKey[it.methodName] = [];
                 }
                 __fnInterface.reqInterfaceKey[it.methodName].push({
-                    params: "data: converFormData(<{ [k: string]: string | Blob }>data)",
-                    name: "data",
+                    params: 'data: converFormData(<{ [k: string]: string | Blob }>data)',
+                    name: 'data',
                     interName: __newInterfaceName,
                     required: false,
                     type: ''
-                })
+                });
                 // 递归执行
-                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, requestFormData)
+                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, requestFormData);
             }
-            
         } else if (!R.isNil(it.body) && !R.isEmpty(it.body)) {
-            let a_type = ''
-            let __newInterfaceName = newInterfaceName + "Body"
+            let a_type = '';
+            let __newInterfaceName = newInterfaceName + 'Body';
             let bodyParams = {};
             if (R.path(['body', 'ref'], it)) {
-                let definitionsItem = definitions[it.body.ref]
+                let definitionsItem = definitions[it.body.ref];
                 bodyParams = definitionsItem ? definitionsItem.properties : {};
             } else if (R.path(['body', 'itemRef'], it)) {
-                let definitionsItem = definitions[it.body.itemRef]
+                let definitionsItem = definitions[it.body.itemRef];
                 bodyParams = definitionsItem ? definitionsItem.properties : {};
-                a_type = '[]'
+                a_type = '[]';
             } else {
-                let s_type = R.replace('integer', 'number', R.pathOr('', ['body', 'schema', 'type'], it))
+                let s_type = R.replace('integer', 'number', R.pathOr('', ['body', 'schema', 'type'], it));
                 // 判断 body 类型为基本类型，或 body 为数组类型，元素为基本类型
-                if (s_type == "array") {
-                   let type = R.replace('integer', 'number', R.pathOr('', ['body', 'schema', 'items', 'type'], it))
-                   s_type = type ? `${type}[]` : 'any'
+                if (s_type == 'array') {
+                    let type = R.replace('integer', 'number', R.pathOr('', ['body', 'schema', 'items', 'type'], it));
+                    s_type = type ? `${type}[]` : 'any';
                 }
-                it.body.__isTypes = true
-                it.body.__type = s_type
-                bodyParams = it.body
-                it.body = null
+                it.body.__isTypes = true;
+                it.body.__type = s_type;
+                bodyParams = it.body;
+                it.body = null;
             }
             if (bodyParams && !R.isEmpty(bodyParams)) {
                 if (!__fnInterface.reqInterfaceKey[it.methodName]) {
-                    __fnInterface.reqInterfaceKey[it.methodName] = []
+                    __fnInterface.reqInterfaceKey[it.methodName] = [];
                 }
                 __fnInterface.reqInterfaceKey[it.methodName].push({
-                    params: "data: data",
-                    name: "data",
+                    params: 'data: data',
+                    name: 'data',
                     interName: __newInterfaceName,
                     required: R.pathOr(false, ['body', 'required'], it),
                     type: a_type
-                })
+                });
                 // 递归执行
-                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, bodyParams)
+                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, bodyParams);
             }
         }
         /**
@@ -376,45 +379,44 @@ function __requestParams(it, key, definitions, __fnInterface, interfaceName = ''
          */
         if (!R.isNil(it.paths) && !R.isEmpty(it.paths)) {
             let requestPath = R.indexBy(R.prop('name'), it.paths);
-            let __newInterfaceName = newInterfaceName + "Path"
+            let __newInterfaceName = newInterfaceName + 'Path';
             if (requestPath && !R.isEmpty(requestPath)) {
                 if (!__fnInterface.reqInterfaceKey[it.methodName]) {
-                    __fnInterface.reqInterfaceKey[it.methodName] = []
+                    __fnInterface.reqInterfaceKey[it.methodName] = [];
                 }
                 __fnInterface.reqInterfaceKey[it.methodName].push({
-                    params: "",
-                    name: "__path",
+                    params: '',
+                    name: '__path',
                     interName: __newInterfaceName,
                     required: false,
                     type: ''
-                })
+                });
                 // 递归执行
-                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, requestPath)
+                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, requestPath);
             }
-         }
-         /**
-          * query 参数
-          */
+        }
+        /**
+         * query 参数
+         */
         if (!R.isNil(it.query) && !R.isEmpty(it.query)) {
-            let __newInterfaceName = newInterfaceName + "Params"
+            let __newInterfaceName = newInterfaceName + 'Params';
             let requestQuery = R.indexBy(R.prop('name'), it.query);
             if (requestQuery && !R.isEmpty(requestQuery)) {
                 if (!__fnInterface.reqInterfaceKey[it.methodName]) {
-                    __fnInterface.reqInterfaceKey[it.methodName] = []
+                    __fnInterface.reqInterfaceKey[it.methodName] = [];
                 }
                 __fnInterface.reqInterfaceKey[it.methodName].push({
-                    params: "params: query",
-                    name: "query",
+                    params: 'params: query',
+                    name: 'query',
                     interName: __newInterfaceName,
                     required: false,
                     type: ''
-                })
+                });
                 // 递归执行
-                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, requestQuery)
+                __requestParams(it, key, definitions, __fnInterface, __newInterfaceName, requestQuery);
             }
         }
-
-    } else { 
+    } else {
         // body 下的对象或数组 ref
         it.ref && (requestParams = R.mergeAll(definitions[it.ref].properties));
     }
@@ -426,16 +428,16 @@ function __requestParams(it, key, definitions, __fnInterface, interfaceName = ''
         }
         __fnInterface[key].interfaceName.push(newInterfaceName);
         // 生成 type 接口
-        if (requestParams.__isTypes && requestParams.in === "body") {
+        if (requestParams.__isTypes && requestParams.in === 'body') {
             let interfaceParamsStr = `\nexport type ${newInterfaceName} = ${requestParams.__type};\n`;
             __fnInterface[key].req.push(interfaceParamsStr);
-            return 
+            return;
         }
         // 生成 interface
         let interfaceParamsStr = `\nexport interface ${newInterfaceName} {\n`;
-        
-        // 
-        let __obj = {}
+
+        //
+        let __obj = {};
         R.forEachObjIndexed((v, k, o) => {
             let o_ref = R.pathOr('', ['$ref'], v).replace(/.*\//g, ''); // 返回数据为对象
             let a_ref = R.pathOr('', ['items', '$ref'], v).replace(/.*\//g, ''); // 返回数据为数组
@@ -458,19 +460,24 @@ function __requestParams(it, key, definitions, __fnInterface, interfaceName = ''
                 if (k.split('[0].')[1]) {
                     // console.log(k)
                     if (!__obj[k.split('[0].')[0]]) {
-                        __obj[k.split('[0].')[0]] = `    ${k.split('[0].')[0]}?: {\n`
+                        __obj[k.split('[0].')[0]] = `    ${k.split('[0].')[0]}?: {\n`;
                     }
-                    __obj[k.split('[0].')[0]] += `        ${k.split('[0].')[1]}: ${__sType}; /* ${(v.description || '').replace(/\*/g, '')}  ${(v.format || '').replace(/\*/g, '')}*/ \n`;
-                    return 
+                    __obj[k.split('[0].')[0]] += `        ${k.split('[0].')[1]}: ${__sType}; /* ${(v.description || '').replace(/\*/g, '')}  ${(v.format || '').replace(
+                        /\*/g,
+                        ''
+                    )}*/ \n`;
+                    return;
                 }
-                interfaceParamsStr += `    ${k}${v.required ? __sType === 'Blob' ? '?':'' : '?'}: ${__sType}; /* ${(v.description || '').replace(/\*/g, '')}  ${(v.format || '').replace(/\*/g, '')}*/ \n`;
+                interfaceParamsStr += `    ${k}${v.required ? (__sType === 'Blob' ? '?' : '') : '?'}: ${__sType} /* ${(v.description || '').replace(/\*/g, '')}  ${(
+                    v.format || ''
+                ).replace(/\*/g, '')}*/;\n`;
                 return;
             }
         }, requestParams);
         R.forEachObjIndexed(async (v, k, o) => {
-            v += `    }[];\n`
-            interfaceParamsStr += v
-        }, __obj)
+            v += `    }[];\n`;
+            interfaceParamsStr += v;
+        }, __obj);
         interfaceParamsStr += '}\n';
         __fnInterface[key].req.push(interfaceParamsStr);
         it.reqInterfaceName = newInterfaceName;
@@ -494,14 +501,14 @@ function __responseParams({ responsesRef, methodName, responsesType }, key, defi
         if ((a_ref || o_ref) && !R.isNil(resParams) && !R.isEmpty(resParams)) {
             __fnInterface.resInterfaceKey[methodName] = newInterfaceName;
             __fnInterface.resInterfaceKey[methodName + 'type'] = a_ref ? '[]' : ''; // 数组 | 对象
-            o_ref && (__fnInterface.resInterfaceKey[key + 'isBase'] = true)
-            a_ref && (__fnInterface.resInterfaceKey[key + 'isBasePage'] = true)
-            let __res = __responseParams({ responsesRef:  a_ref || o_ref, methodName }, key, definitions, __fnInterface, newInterfaceName);
+            o_ref && (__fnInterface.resInterfaceKey[key + 'isBase'] = true);
+            a_ref && (__fnInterface.resInterfaceKey[key + 'isBasePage'] = true);
+            let __res = __responseParams({ responsesRef: a_ref || o_ref, methodName }, key, definitions, __fnInterface, newInterfaceName);
             return;
         } else {
             // 无返回 ****s
             let __sType = getDataTypes(null, { type: responsesType });
-            __fnInterface.resInterfaceKey[key + 'isBase'] = true
+            __fnInterface.resInterfaceKey[key + 'isBase'] = true;
             __fnInterface.resInterfaceKey[methodName] = __sType;
             return;
         }
@@ -515,17 +522,17 @@ function __responseParams({ responsesRef, methodName, responsesType }, key, defi
      * 嵌套对象
      */
     let interfaceParamsStr = `\nexport interface ${newInterfaceName} {\n`;
-    let __obj = {}
+    let __obj = {};
     R.forEachObjIndexed(async (v, k, o) => {
         let o_ref = R.pathOr('', ['$ref'], v).replace(/.*\//g, ''); // 返回数据为对象
         let a_ref = R.pathOr('', ['items', '$ref'], v).replace(/.*\//g, ''); // 返回数据为数组
         // 判断 ref 执行的集合是否为空
-        const hasNewInterface = R.path([o_ref || a_ref, 'properties'])(definitions)
+        const hasNewInterface = R.path([o_ref || a_ref, 'properties'])(definitions);
         if ((a_ref || o_ref) && !R.isNil(hasNewInterface) && !R.isEmpty(hasNewInterface)) {
             // 数组  // 对象
             let childInterName = `I${R.replace(/^\w{1}/, R.toUpper)(k)}`;
-            interfaceParamsStr += `    ${k}: ${childInterName}${a_ref? "[]" : ""}, /* ${v.description || ''}  ${v.format || ''}*/ \n`;
-            let __res = __responseParams({ responsesRef:  a_ref || o_ref, methodName }, key, definitions, __fnInterface, childInterName);
+            interfaceParamsStr += `    ${k}: ${childInterName}${a_ref ? '[]' : ''} /* ${v.description || ''}  ${v.format || ''}*/;\n`;
+            let __res = __responseParams({ responsesRef: a_ref || o_ref, methodName }, key, definitions, __fnInterface, childInterName);
             return;
         } else {
             // 基础数据类型
@@ -533,19 +540,22 @@ function __responseParams({ responsesRef, methodName, responsesType }, key, defi
             // productSymptomList[0].proSymId 兼容后端这种不规范的 key
             if (k.split('[0].')[1]) {
                 if (!__obj[k.split('[0].')[0]]) {
-                    __obj[k.split('[0].')[0]] = `    ${k.split('[0].')[0]}?: {\n`
+                    __obj[k.split('[0].')[0]] = `    ${k.split('[0].')[0]}?: {\n`;
                 }
-                __obj[k.split('[0].')[0]] += `        ${k.split('[0].')[1]}: ${__sType}; /* ${(v.description || '').replace(/\*/g, '')}  ${(v.format || '').replace(/\*/g, '')}*/ \n`;
-                return 
+                __obj[k.split('[0].')[0]] += `        ${k.split('[0].')[1]}: ${__sType} /* ${(v.description || '').replace(/\*/g, '')}  ${(v.format || '').replace(
+                    /\*/g,
+                    ''
+                )}*/;\n`;
+                return;
             }
-            interfaceParamsStr += `    ${k}${v.required ? '' : '?'}: ${__sType}; /* ${(v.description || '').replace(/\*/g, '')}  ${(v.format || '').replace(/\*/g, '')}*/ \n`;
+            interfaceParamsStr += `    ${k}${v.required ? '' : '?'}: ${__sType} /* ${(v.description || '').replace(/\*/g, '')}  ${(v.format || '').replace(/\*/g, '')}*/;\n`;
             return;
         }
     }, resParams);
     R.forEachObjIndexed(async (v, k, o) => {
-        v += `    }[];\n`
-        interfaceParamsStr += v
-    }, __obj)
+        v += `    }[];\n`;
+        interfaceParamsStr += v;
+    }, __obj);
     interfaceParamsStr += '}\n';
     __fnInterface[key].res.push(interfaceParamsStr);
 }
