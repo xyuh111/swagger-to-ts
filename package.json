@@ -1,6 +1,6 @@
 {
   "name": "swagger-codegen-axios-ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,10 @@
   "keywords": [],
   "author": "Xie Yuhui <i@xieyuhui.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xyuh111/swagger-to-ts"
+  },
   "dependencies": {
     "dayjs": "^1.10.7",
     "mkdirp": "^1.0.4",
