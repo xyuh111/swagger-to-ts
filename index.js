@@ -56,7 +56,7 @@ function __readFileSync(value) {
         return new Error('remoteUrl or jsonPath is undefined');
     }
     // 网址判断
-    if (/^(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-\(\)]*[\w@?^=%&/~+#-\(\)])?$/.test(value)) {
+    if (/^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/.test(value)) {
         return getJsonByApiDocs(value);
     }
     // 获取本地json
